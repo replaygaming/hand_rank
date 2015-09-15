@@ -9,7 +9,7 @@ Please read this entire readme before using the gem, thank you.
 
 # HandRank
 
-The hand_rank gem is a Ruby, with C extension, implementation of the 2 plus 2 
+The hand_rank gem is a Ruby, with C extension, implementation of the Two Plus Two 
 hand evaluation algorithm for Texam Hold'em hands (or any hands following the 
 same ranking order).
 
@@ -21,7 +21,7 @@ Each, final, cell contains the Cactus Kev hands equivalence number, a number
 describing the hand among every possible hand. This number can then be compared 
 to any other hands equivalence number to see who is the winner.
 
-The 2 plus 2 version also reorders the equivalence classes to allow for getting 
+The Plus Two version also reorders the equivalence classes to allow for getting 
 a rank within a category. So you can split the rank into a category and a rank
 within that category.
 
@@ -37,9 +37,9 @@ equivalence classes.
 
 [Paul Senzee - "Some Perfect Hash"](http://www.paulsenzee.com/2006/06/some-perfect-hash.html)
 describes a hashing algorithm to improve on the size of the Cactus Kev lookup
-table and is the same that is used for the lookup table to the 2 plus 2 solution.
+table and is the same that is used for the lookup table to the Two Plus Two solution.
 
-[The original thread on the 2 plus 2 forums]() where it all came together. It's 
+[The original thread on the Two Plus Two forums]() where it all came together. It's 
 long and threatens to become a bit flamy at times. But in the end I think it is 
 a great example of what you can accomplich on the internet, with strangers if
 you are all prepared to act for the greater good.

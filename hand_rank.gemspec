@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.authors       = "Jonas Schubert Erlandsson"
   spec.email         = "jonas.schubert.erlandsson@my-codeworks.com"
   spec.summary       = "Implements fast poker hand ranking algorithms in C and exposes them through a Ruby API."
-  spec.description   = "This gem implements the 2 plus 2 forum algorith for ranking \"normal\" poker hands, such that are used in Texas Hold'em for example. Support for more hand types, such as high/low hands, will be added in future versions."
+  spec.description   = "This gem implements the Two Plus Two forum algorithm for ranking \"normal\" poker hands, such that are used in Texas Hold'em for example. Support for more hand types, such as high/low hands, will be added in future versions."
   spec.homepage      = "https://github.com/replaygaming/hand_rank"
   spec.license       = "MIT"
 
