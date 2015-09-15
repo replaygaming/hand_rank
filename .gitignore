@@ -1,10 +1,5 @@
-/.bundle/
-/.yardoc
 /Gemfile.lock
-/_yardoc/
 /coverage/
-/doc/
-/pkg/
 /spec/reports/
 /tmp/
 *.bundle
@@ -12,3 +7,4 @@
 *.o
 *.a
 mkmf.log
+.DS_Store
