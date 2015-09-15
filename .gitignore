@@ -8,3 +8,5 @@
 *.a
 mkmf.log
 .DS_Store
+hand_rank-*.gem
+lib/hand_rank/ranks.data*
