@@ -7,12 +7,10 @@
 int HR[32487834];
 const char * const HAND_CATEGORY_KEYS[] = { "invalid_hand", "high_card", "one_pair", "two_pairs", "three_of_a_kind", "straight", "flush", "full_house", "four_of_a_kind", "straight_flush" };
 
-char* get_path_from_ruby(){
-  VALUE cHandRank = rb_const_get(rb_cObject, rb_intern("HandRank"));
-  ID sym_mymodule = rb_intern( "HOME" );
-  VALUE home = rb_const_get( cHandRank, sym_mymodule );
-  return StringValueCStr( home );
-}
+/******************************************************************************/
+/*  These are pure C functions and should not deal with any Ruby values or    */
+/*  conversions.                                                              */
+/******************************************************************************/
 
 char* concat( char* first, char* second ){
   size_t first_length = strlen( first );
@@ -88,40 +86,50 @@ int c_rank_5_card_hand( int* cards ){
   return HR[p];
 }
 
-void load_lut(){
-  memset( HR, 0, sizeof( HR ));
-
-  FILE * fin = fopen( with_path("ranks.data"), "rb" );
-
-  if( fin == NULL ){
-    rb_raise( rb_eIOError, "could not open data file.");
-    exit(1);
-  }
-
-  // Load the HANDRANKS.DAT file data into the HR array
-  size_t bytesread = fread( HR, sizeof( HR ), 1, fin );
-  fclose( fin );
-}
-
-VALUE rb_get( VALUE klass, VALUE rb_cards ){
-  int length = RARRAY_LEN( rb_cards );
-  int c_cards[ length ];
+int c_rank_hand( int* cards, int length ){
   int result;
-
-  convert_ruby_array_to_c_array( rb_cards, c_cards, length );
 
   switch( length ){
     case 5 :
-       result = c_rank_5_card_hand( c_cards );
+       result = c_rank_5_card_hand( cards );
        break;
     case 6 :
-       result = c_rank_6_card_hand( c_cards );
+       result = c_rank_6_card_hand( cards );
        break;
     default :
-       result = c_rank_7_card_hand( c_cards );
+       result = c_rank_7_card_hand( cards );
   }
 
-  return INT2NUM( result );
+  return result;
+}
+
+int c_load_lut( char* path ){
+  memset( HR, 0, sizeof( HR ));
+
+  FILE * fin = fopen( path, "rb" );
+
+  if( fin == NULL ){
+    return -1;
+  }
+
+  size_t bytesread = fread( HR, sizeof( HR ), 1, fin );
+  fclose( fin );
+
+  return 0;
+}
+
+/******************************************************************************/
+/*  These are Ruby functions, in C, and deal with the convertion of values to */
+/*  and from the two contexts.                                                */
+/******************************************************************************/
+
+VALUE rb_rank( VALUE klass, VALUE rb_num_ary ){
+  int length = RARRAY_LEN( rb_num_ary );
+  int c_cards[ length ];
+
+  convert_ruby_array_to_c_array( rb_num_ary, c_cards, length );
+
+  return INT2NUM( c_rank_hand( c_cards, length ));
 }
 
 VALUE rb_category( VALUE klass, VALUE rb_rank ){
@@ -152,20 +160,39 @@ VALUE rb_explain( VALUE klass, VALUE rb_rank ){
   int category = rank >> 12;
   int rank_in_category = rank & 0x00000FFF;
   VALUE category_key = rb_category_key( klass, rb_rank );
-  VALUE name = rb_str_gsub( category_key, rb_str_new2( "_" ), rb_str_new2( " " ));
 
-  VALUE result = rb_sprintf( "The hand is a %"PRIsVALUE"\nRank: %d Category: %d Rank in category: %d", name, rank, category, rank_in_category );
+  VALUE result = rb_sprintf( "The hand is a %"PRIsVALUE"\nRank: %d Category: %d Rank in category: %d", category_key, rank, category, rank_in_category );
 
   return result;
 }
 
+char* rb_get_path(){
+  VALUE cHandRank = rb_const_get(rb_cObject, rb_intern("HandRank"));
+  ID sym_mymodule = rb_intern( "HOME" );
+  VALUE home = rb_const_get( cHandRank, sym_mymodule );
+  return StringValueCStr( home );
+}
+
+void rb_load_lut(){
+  with_path("ranks.data")
+  if( c_load_lut() == -1 ){
+    rb_raise( rb_eIOError, "could not open data file.");
+    exit( 1 );
+  }
+}
+
+/******************************************************************************/
+/*  This is the "magical" setup function, the main entry point, that is       */
+/*  responsible for exporting our C function to the Ruby context.             */
+/******************************************************************************/
+
 void Init_hand_rank( void ){
 
-  load_lut();
+  rb_load_lut();
 
   VALUE cHandRank = rb_const_get(rb_cObject, rb_intern("HandRank"));
 
-  rb_define_singleton_method( cHandRank, "get", rb_get, 1 );
+  rb_define_singleton_method( cHandRank, "rank", rb_rank, 1 );
   rb_define_singleton_method( cHandRank, "category", rb_category, 1 );
   rb_define_singleton_method( cHandRank, "rank_in_category", rb_rank_in_category, 1 );
   rb_define_singleton_method( cHandRank, "category_key", rb_category_key, 1 );
