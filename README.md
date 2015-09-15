@@ -2,6 +2,11 @@
 
 Please read this entire readme before using the gem, thank you.
 
+[![Gem Version](https://badge.fury.io/rb/hand_rank.svg)](http://badge.fury.io/rb/hand_rank)
+[![Code Climate](https://codeclimate.com/github/replaygaming/hand_rank/badges/gpa.svg)](https://codeclimate.com/github/replaygaming/hand_rank)
+[![Test Coverage](https://codeclimate.com/github/replaygaming/hand_rank/badges/coverage.svg)](https://codeclimate.com/github/replaygaming/hand_rank/coverage)
+
+
 # HandRank
 
 The hand_rank gem is a Ruby, with C extension, implementation of the 2 plus 2 
