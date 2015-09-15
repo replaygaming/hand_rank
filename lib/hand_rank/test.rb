@@ -113,6 +113,7 @@ class Card
   alias :to_s :s
   alias :to_str :str
   alias :to_sym :sym
+  alias :to_i :abs
 
   def initialize( value:, suit: )
     value = normalize_value( value )
@@ -158,7 +159,14 @@ private
 
 end
 
+require 'forwardable'
+
 class Hand
+
+  extend Forwardable
+
+  delegate [:map!, :[], :<<, :size, :to_a] => :@cards
+
   def initialize( *card_strings )
     @cards = card_strings.map do |string|
       Card.new(
@@ -181,18 +189,23 @@ end
 hand = Hand.new( '2C', '2D', '2S', '13D', '8C', '8S' )
 # hand = Hand.new( '2C', '2D', '2S', '13D', '8C' )
 
-p hand.cards.map( &:abs )
-rank = HandRank.get( hand.cards.map( &:abs ))
-puts HandRank.explain( rank )
+puts hand
+rank = HandRank.get( hand )
+p HandRank.explain( rank )
 
 require 'benchmark'
 
-n = 8000000
+n = 10#8000000
 a = [1,2,3,4,5,6,7]
 Benchmark.bm(7) do |x|
   x.report('ranking') do
     for i in 1..n
       HandRank.get(a)
+    end
+  end
+  x.report('ranking') do
+    for i in 1..n
+      HandRank.rb_get(a)
     end
   end
   x.report('"s"+"s"') do
@@ -201,3 +214,8 @@ Benchmark.bm(7) do |x|
     end
   end
 end
+
+# Test with transformation code in Ruby
+#               user     system      total        real
+# ranking   5.380000   0.000000   5.380000 (  5.388186)
+# "s"+"s"   1.850000   0.010000   1.860000 (  1.858708)
