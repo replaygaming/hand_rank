@@ -51,9 +51,9 @@ char* c_hand_category_key( int index ){
 }
 
 void convert_ruby_array_to_c_array( VALUE rb_cards, int *c_cards, int length ){
-  int i = 0;
+  int i;
 
-  for( int i = 0; i < length; i++ ){
+  for( i = 0; i < length; i++ ){
     c_cards[ i ] = NUM2INT( rb_ary_entry( rb_cards, i ));
   }
 }
