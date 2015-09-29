@@ -12,6 +12,8 @@ const char * const HAND_CATEGORY_KEYS[] = { "invalid_hand", "high_card", "one_pa
 /*  conversions.                                                              */
 /******************************************************************************/
 
+char* rb_get_gem_path();
+
 char* concat( char* first, char* second ){
   size_t first_length = strlen( first );
   size_t second_length = strlen( second );
@@ -24,8 +26,8 @@ char* concat( char* first, char* second ){
   return both;
 }
 
-char* with_path( char* file_name ){
-  char* path = get_path_from_ruby();
+char* c_prefix_with_gem_path( char* file_name ){
+  char* path = rb_get_gem_path();
 
   return concat( path, file_name );
 }
@@ -166,7 +168,7 @@ VALUE rb_explain( VALUE klass, VALUE rb_rank ){
   return result;
 }
 
-char* rb_get_path(){
+char* rb_get_gem_path(){
   VALUE cHandRank = rb_const_get(rb_cObject, rb_intern("HandRank"));
   ID sym_mymodule = rb_intern( "HOME" );
   VALUE home = rb_const_get( cHandRank, sym_mymodule );
@@ -174,8 +176,8 @@ char* rb_get_path(){
 }
 
 void rb_load_lut(){
-  with_path("ranks.data")
-  if( c_load_lut() == -1 ){
+  char* path =  c_prefix_with_gem_path( "ranks.data" );
+  if( c_load_lut( path ) == -1 ){
     rb_raise( rb_eIOError, "could not open data file.");
     exit( 1 );
   }
