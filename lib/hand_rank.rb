@@ -1,7 +1,7 @@
 require "hand_rank/version"
 
 module HandRank
-  HOME = __FILE__.to_s.gsub('.rb','/')
+  HOME = __FILE__.gsub( /.rb$/,'/')
 
   def self.get( hand )
     cards = hand.to_a.map{|c| c.to_i }

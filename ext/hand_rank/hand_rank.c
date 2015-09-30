@@ -178,7 +178,7 @@ char* rb_get_gem_path(){
 void rb_load_lut(){
   char* path =  c_prefix_with_gem_path( "ranks.data" );
   if( c_load_lut( path ) == -1 ){
-    rb_raise( rb_eIOError, "could not open data file.");
+    rb_raise( rb_eIOError, "Could not open the data file at %s%s\n         Please go to the folder and manually unzip ranks.data.zip to solve this problem.", rb_get_gem_path(), "ranks.data" );
     exit( 1 );
   }
 }
