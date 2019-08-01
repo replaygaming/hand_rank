@@ -1,6 +1,7 @@
 root_dir = File.expand_path File.dirname(__FILE__)
 lib_dir = File.join( root_dir, 'lib' )
 $LOAD_PATH << lib_dir
+$LOAD_PATH << root_dir
 
 require 'hand_rank'
 
@@ -192,6 +193,12 @@ hand = Hand.new( '2C', '2D', '2S', '13D', '8C', '8S' )
 puts hand
 rank = HandRank.get( hand )
 p HandRank.explain( rank )
+
+puts 'This we can get with optional #rank_to_hand method'
+
+require 'rank_to_hand'
+
+p HandRank.rank_to_hand( rank )
 
 require 'benchmark'
 
