@@ -9,25 +9,25 @@ Please read this entire readme before using the gem, thank you.
 
 # HandRank
 
-The hand_rank gem is a Ruby, with C extension, implementation of the Two Plus Two 
-hand evaluation algorithm for Texam Hold'em hands (or any hands following the 
+The hand_rank gem is a Ruby, with C extension, implementation of the Two Plus Two
+hand evaluation algorithm for Texam Hold'em hands (or any hands following the
 same ranking order).
 
-The algorithm uses a large, 130+MB, lookup table and ranks a hand 5-7 card hand 
+The algorithm uses a large, 130+MB, lookup table and ranks a hand 5-7 card hand
 by doing 5-7 jumps in hte table and landing on the cell that represents the hand
 you walked to get there, regardless of the order of the steps.
 
-Each, final, cell contains the Cactus Kev hands equivalence number, a number 
-describing the hand among every possible hand. This number can then be compared 
+Each, final, cell contains the Cactus Kev hands equivalence number, a number
+describing the hand among every possible hand. This number can then be compared
 to any other hands equivalence number to see who is the winner.
 
-The Plus Two version also reorders the equivalence classes to allow for getting 
+The Plus Two version also reorders the equivalence classes to allow for getting
 a rank within a category. So you can split the rank into a category and a rank
 within that category.
 
 ## Refrence
 
-For some not so light reading on the subject I suggest you check out the 
+For some not so light reading on the subject I suggest you check out the
 original sources for all the pieces as well as a comparison roundup from, the
 now defunct, codingthewheel site:
 
@@ -39,22 +39,18 @@ equivalence classes.
 describes a hashing algorithm to improve on the size of the Cactus Kev lookup
 table and is the same that is used for the lookup table to the Two Plus Two solution.
 
-[The original thread on the Two Plus Two forums]() where it all came together. It's 
-long and threatens to become a bit flamy at times. But in the end I think it is 
+[The original thread on the Two Plus Two forums]() where it all came together. It's
+long and threatens to become a bit flamy at times. But in the end I think it is
 a great example of what you can accomplich on the internet, with strangers if
 you are all prepared to act for the greater good.
 
-And finally [the poker evaluator roundup from codingthewheel.com](http://web.archive.org/web/20150113024316/http://codingthewheel.com/archives/poker-hand-evaluator-roundup) unfortunately via the 
-waybackmachine since the original site is no longer live :/ Great roundup, with 
-code, of all the relevant approaches. The code from the roundup is still 
+And finally [the poker evaluator roundup from codingthewheel.com](http://web.archive.org/web/20150113024316/http://codingthewheel.com/archives/poker-hand-evaluator-roundup) unfortunately via the
+waybackmachine since the original site is no longer live :/ Great roundup, with
+code, of all the relevant approaches. The code from the roundup is still
 [available on Github](https://github.com/christophschmalhofer/poker/tree/master/XPokerEval)
 so there is that ...
 
 ## Installation
-
- > When the gem is finished this is what you will do. Right now you also need to
- > manually extract the `ranks.data.zip` in `lib/hand_rank/` to `ranks.data` in 
- > the same folder. This is the lookup table and without it you get nothing :)
 
 Add this line to your application's Gemfile:
 
@@ -73,7 +69,7 @@ Or install it yourself as:
 ## Usage
 ### Hand and card format
 To create a hand you need the cards absolute values. You somehow have to convert
-your representation of a hand into an array of integers where each integer 
+your representation of a hand into an array of integers where each integer
 represents a card following this encoding:
 
 ```ruby
@@ -86,14 +82,14 @@ ABSOLUTE_CARD_VALUE_LOOKUP = {
 }
 ```
 
-This table allows you to lookup and card by suit and value (from 1 to 14, 
+This table allows you to lookup and card by suit and value (from 1 to 14,
 allowing for both high and low aces). In our implementation the `Card` class has
-an `abs`method and the `Hand` class impersonates an array. Since this gem will 
-actually run `map!(&:abs)` on the input before handing it off to the C code our 
-setup allows us to give it a real `Hand` and just leave it to the magic to 
+an `abs`method and the `Hand` class impersonates an array. Since this gem will
+actually run `map!(&:abs)` on the input before handing it off to the C code our
+setup allows us to give it a real `Hand` and just leave it to the magic to
 transform that into an array of integers.
 
-It will still work fine if you feed it an array of integers though. Arrays 
+It will still work fine if you feed it an array of integers though. Arrays
 respond to `map` and fixnum responds to `abs` so it is golden either way.
 
 ### Operations
@@ -162,8 +158,8 @@ ranking   0.900000   0.000000   0.900000 (  0.907518)
 "s"+"s"   1.850000   0.000000   1.850000 (  1.856820)
 ```
 
-So ranking a hand is about twice as fast as a string concatenation. On the test 
-machine it can rank over 8 million hands a second, that is one hand every 8 or 
+So ranking a hand is about twice as fast as a string concatenation. On the test
+machine it can rank over 8 million hands a second, that is one hand every 8 or
 so microseconds.
 
 ## Contributing
