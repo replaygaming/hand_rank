@@ -29,6 +29,70 @@ module HandRank
     MIN_POSSIBLE_POINTS = 4097
     MAX_POSSIBLE_POINTS = 36_874
 
+    # Calculation of base15 points, slightly changed for running in this way, but producing the same values.
+    class CalculateBase15Points
+      MODIFIER = 760_000
+
+      SCORING = {
+        royal_flush: 10 * MODIFIER,
+        straight_flush: 8 * MODIFIER,
+        four_of_a_kind: 7 * MODIFIER,
+        full_house: 6 * MODIFIER,
+        flush: 5 * MODIFIER,
+        straight: 4 * MODIFIER,
+        three_of_a_kind: 3 * MODIFIER,
+        two_pairs: 2 * MODIFIER,
+        one_pair: MODIFIER,
+        high_card: 0,
+      }
+
+      attr_reader :cards_ranks
+      attr_accessor :combination
+
+      def initialize(card_numbers, combination)
+        @combination = combination.to_sym
+        @cards_ranks = card_numbers.sort.map { |c| 2 + (c - 1) / 4 }
+      end
+
+      def call
+        case combination
+        when :straight_flush, :straight
+          5.downto(1).with_index {|v, i| histogram[i] = [v,1]} if aces_low_on_straight?(histogram)
+        end
+
+        self.combination = :royal_flush if royal_flush?
+
+        SCORING[combination] + points_from_histogram(histogram)
+      end
+
+      def aces_low_on_straight?(histogram)
+        (histogram.collect(&:first) - [14]).sort == [2, 3, 4, 5]
+      end
+
+      def royal_flush?
+        combination == :straight_flush && histogram.collect(&:first).last == 10
+      end
+
+      def points_from_histogram(histogram)
+        histogram.flat_map do |score|
+          score[1].times.map { score[0].to_s(15) }
+        end.join.to_i(15)
+      end
+
+      # Get the histogram of cards ranks as an array of arrays,
+      # [[rank, count], [rank, count]...]
+      # sorted by descending count, then descending rank
+      #
+      def histogram
+        return @histogram if defined?(@histogram)
+
+        @histogram ||= cards_ranks.reduce(Hash.new(0)) do |ranks, rank|
+          ranks[rank] += 1
+          ranks
+        end.to_a
+        @histogram.sort! { |a, b| a[1] == b[1] ? b[0] <=> a[0] : b[1] <=> a[1] }
+      end
+    end
 
     def self.call
       File.open('lib/hand_rank/rank_to_hand.rb', 'w') do |f|
@@ -62,7 +126,8 @@ module HandRank
                 points = HandRank.get(cards_array)
                 combination = HandRank.category_key(points)
                 hand, ranks = process_cards(cards_array, combination)
-                acc[points] = { combination: combination, ranks: ranks, hand: hand }
+                base_15_points = CalculateBase15Points.new(cards_array, combination).call
+                acc[points] = { combination: combination, ranks: ranks, hand: hand, base_15_points: base_15_points }
               end
             end
           end
