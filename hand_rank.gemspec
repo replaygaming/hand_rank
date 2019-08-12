@@ -13,7 +13,7 @@ Gem::Specification.new do |spec|
   spec.homepage      = "https://github.com/replaygaming/hand_rank"
   spec.license       = "MIT"
 
-  spec.required_ruby_version = '~> 2.3'
+  spec.required_ruby_version = '~> 2.4'
 
   spec.files         = `git ls-files -z`.split("\x0")
 
