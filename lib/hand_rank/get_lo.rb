@@ -1,6 +1,23 @@
 # frozen_string_literal: true
 
 module HandRank
+  # The main purpose of this class is to convert `absolute values` of the cards to
+  # the actual low combination rank, see: `.call` method.
+  #
+  # Cards values can be provided in any order.
+  # The method works with O(1) complexity.
+  #
+  # Algorithm details:
+  # We replace every card rank (and we have 4 absolute values for each rank) with some prime
+  # number bigger than 1. Then me multiply all this numbers (name it `internal_points`). For 1
+  # hand this `internal_points` will be the same regardless the initial ordering or card suits.
+  # (The substitution Hash is generated once. see: `.absolute_value_as_primitives`).
+  #
+  # Also, we have the Hash, where the key is `internal_points`, and the value is rank.
+  # It help to get back the rank, or if the data does not match any pattern, it returns `nil`.
+  # Since we have only `MAXIMUM_RANK = 56` combinations, it is not costly to store all this
+  # computations in memory.
+  # (see `.low_combinations`)
   class GetLo
     HAND_RANKS = %w[A 2 3 4 5 6 7 8].freeze
 
@@ -12,6 +29,11 @@ module HandRank
     MAXIMUM_RANK = 56
 
     class << self
+      # Accepts absolute cards values (or an Array of them) as an argument(s),
+      # and return the rank of the low combination, where the highest rank means the best hand.
+      # If the hand does not contains low, returns nil
+      #
+      # Returns Integer or nil
       def call(*ags)
         internal_points = ags.flatten.map { |el| absolute_value_as_primitives[el] || 1 }.inject(:*)
         low_combinations[internal_points]
@@ -37,7 +59,7 @@ module HandRank
       # card where the key is a card `absolute_value` and the value is prime number.
       # This will allow to avoid sorting of the hand.
       #
-      # Return Hash
+      # Returns Hash
       def absolute_value_as_primitives
         return @absolute_value_as_primitives if @absolute_value_as_primitives
 
