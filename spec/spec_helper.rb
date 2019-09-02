@@ -9,6 +9,10 @@ require 'hand_rank/rank_to_hand'
 
 SPEC_ROOT = Pathname.new(File.expand_path('.', __dir__))
 
+Pathname.glob(SPEC_ROOT.join('helpers', '*.rb')).each do |helper|
+  require helper
+end
+
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
   config.example_status_persistence_file_path = '.rspec_status'
