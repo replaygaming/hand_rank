@@ -130,6 +130,17 @@ puts HandRank.explain( rank )
 #    Rank: 20490 Category: 5 Rank in category: 10
 ```
 
+#### Get low combination rank
+
+```
+require 'hand_rank/get_lo'
+
+# ["As", "6d", "2c", "5d", "4c"]
+HandRank.get_lo([52, 18, 1, 14, 9]) # => 46
+```
+
+Keep in mind, that the best combination is 56th and the worst is 1.
+
 #### Rank to hand (optional)
 
 ```ruby
