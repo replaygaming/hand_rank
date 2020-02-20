@@ -28,6 +28,68 @@ module HandRank
     # Amount of possible low combinations.
     MAXIMUM_RANK = 56
 
+    # The allowable Lo hand combinations,
+    # ranked from best to worst
+    # Taken from https://help.replaypoker.com/hc/en-us/articles/360002231514-Omaha-Hi-Lo-
+    RANKED_COMBINATIONS = [
+      %w(A 2 3 4 5).freeze,
+      %w(A 2 3 4 6).freeze,
+      %w(A 2 3 5 6).freeze,
+      %w(A 2 4 5 6).freeze,
+      %w(A 3 4 5 6).freeze,
+      %w(2 3 4 5 6).freeze,
+      %w(A 2 3 4 7).freeze,
+      %w(A 2 3 5 7).freeze,
+      %w(A 2 4 5 7).freeze,
+      %w(A 3 4 5 7).freeze,
+      %w(2 3 4 5 7).freeze,
+      %w(A 2 3 6 7).freeze,
+      %w(A 2 4 6 7).freeze,
+      %w(A 3 4 6 7).freeze,
+      %w(2 3 4 6 7).freeze,
+      %w(A 2 5 6 7).freeze,
+      %w(A 3 5 6 7).freeze,
+      %w(2 3 5 6 7).freeze,
+      %w(A 4 5 6 7).freeze,
+      %w(2 4 5 6 7).freeze,
+      %w(3 4 5 6 7).freeze,
+      %w(A 2 3 4 8).freeze,
+      %w(A 2 3 5 8).freeze,
+      %w(A 2 4 5 8).freeze,
+      %w(A 3 4 5 8).freeze,
+      %w(2 3 4 5 8).freeze,
+      %w(A 2 3 6 8).freeze,
+      %w(A 2 4 6 8).freeze,
+      %w(A 3 4 6 8).freeze,
+      %w(2 3 4 6 8).freeze,
+      %w(A 2 5 6 8).freeze,
+      %w(A 3 5 6 8).freeze,
+      %w(2 3 5 6 8).freeze,
+      %w(A 4 5 6 8).freeze,
+      %w(2 4 5 6 8).freeze,
+      %w(3 4 5 6 8).freeze,
+      %w(A 2 3 7 8).freeze,
+      %w(A 2 4 7 8).freeze,
+      %w(A 3 4 7 8).freeze,
+      %w(2 3 4 7 8).freeze,
+      %w(A 2 5 7 8).freeze,
+      %w(A 3 5 7 8).freeze,
+      %w(2 3 5 7 8).freeze,
+      %w(A 4 5 7 8).freeze,
+      %w(2 4 5 7 8).freeze,
+      %w(3 4 5 7 8).freeze,
+      %w(A 2 6 7 8).freeze,
+      %w(A 3 6 7 8).freeze,
+      %w(2 3 6 7 8).freeze,
+      %w(A 4 6 7 8).freeze,
+      %w(2 4 6 7 8).freeze,
+      %w(3 4 6 7 8).freeze,
+      %w(A 5 6 7 8).freeze,
+      %w(2 5 6 7 8).freeze,
+      %w(3 5 6 7 8).freeze,
+      %w(4 5 6 7 8).freeze,
+    ].freeze
+
     class << self
       # Accepts absolute cards values (or an Array of them) as an argument(s),
       # and return the rank of the low combination, where the highest rank means the best hand.
@@ -45,10 +107,9 @@ module HandRank
       #
       # Keep in mind, that keys do not have any correlation with hand strength.
       #
-      # Returns Hash[Integer]=OpenStruct
+      # Returns Hash[Integer]=integer
       def low_combinations
-        @low_combinations ||= HAND_RANKS
-                              .combination(5).map.with_index { |el, i| [MAXIMUM_RANK - i, el] }
+        @low_combinations ||= RANKED_COMBINATIONS.map.with_index { |combination, i| [MAXIMUM_RANK - i, combination] }
                               .each_with_object({}) do |(rank, combination), acc|
           points = combination.map { |card_rank| PRIMES[HAND_RANKS.index(card_rank)] }.inject(:*)
           acc[points] = rank
