@@ -51,18 +51,18 @@ RSpec.describe HandRank::GetLo do
       cards = as_absolute_values(%w[As 6d 2c 5d 4c])
       cards.permutation.each do |combination|
         it("with doubled card rank, as combination absolute cards values #{combination.inspect} returns OpenStruct") do
-          expect(described_class.call(combination)).to eq 46
+          expect(described_class.call(combination)).to eq 53
         end
       end
     end
 
     [
-        { cards: %w[As 6d 2c 5d 4c], rank: 46 },
+        { cards: %w[As 6d 2c 5d 4c], rank: 53 },
         { cards: %w[As 3d 4c 5d 2c], rank: 56 },
         { cards: %w[As 3d 4c 6d 2c], rank: 55 },
-        { cards: %w[7s 3d 4c 6d 2c], rank: 18 },
-        { cards: %w[7s 3d 8c 6d 2c], rank: 12 },
-        { cards: %w[7s 5d 8c 6d 4c], rank: 1  },
+        { cards: %w[7s 3d 4c 6d 2c], rank: 42 },
+        { cards: %w[7s 3d 8c 6d 2c], rank: 8 },
+        { cards: %w[7s 5d 8c 6d 4c], rank: 1 },
     ].each do |condition|
       it("detects the combination #{condition[:cards]}") do
         expect(described_class.call(as_absolute_values(condition[:cards]))).to eq condition[:rank]
